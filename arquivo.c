@@ -4,7 +4,6 @@
 #include <ctype.h>
 #include "arquivo.h"
 #include "Lista.h"
-#include "arvore.h"
 
 
 void contarFrequencia(FILE *arquivo, Lista *list) {

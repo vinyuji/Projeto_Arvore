@@ -3,7 +3,6 @@
 #include <string.h>
 #include <ctype.h>
 #include "Lista.h"
-// #include "arvore.h"
 #include "funcoes.h"
 
 

@@ -2,7 +2,6 @@
 #define ARQUIVO_H
 #include <stdio.h>
 #include "Lista.h"
-#include "arvore.h"
 
 void leituraArquivo();
 void contarLetras(Lista *list);
