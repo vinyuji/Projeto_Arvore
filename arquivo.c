@@ -2,18 +2,24 @@
 #include <stdlib.h>
 #include <string.h>
 #include <ctype.h>
+#include "arquivo.h"
+#include "Lista.h"
+#include "arvore.h"
 
-void contarFrequencia(FILE *arquivo) {
-    if (arquivo == NULL) {
-        printf("Arquivo inválido.\n");
+
+void contarFrequencia(FILE *arquivo, Lista *list) {
+    if (arquivo == NULL || list == NULL) {
+        printf("Parâmetros inválidos.\n");
         return;
     }
 
     int frequencia[256] = {0};
     int c;
+    char letra;
+    char buffer[2];
 
     while ((c = fgetc(arquivo)) != EOF) {
-        if (isalpha(c) || ispunct(c) || isspace(c)) {  
+        if (isalpha(c) || ispunct(c) || isspace(c)) {
             frequencia[c]++;
         }
     }
@@ -21,17 +27,32 @@ void contarFrequencia(FILE *arquivo) {
     for (int i = 0; i < 256; i++) {
         if (frequencia[i] > 0) {
             if (isalpha(i)) {
-                printf("%c: %d\n", i, frequencia[i]);
+                letra = i;
+                buffer[0] = letra;
+                buffer[1] = '\0';
+                Frequencia novaFrequencia;
+                novaFrequencia.Letra = strdup(buffer);
+                novaFrequencia.Frequencia = frequencia[i];
+                novaFrequencia.frequenciaLetra = 1;
+
+                InserirInicioLista(list, novaFrequencia);
             } else {
-                if(i >= 32 && i <= 126 )
-                printf("'%c' (%d): %d\n", i, i, frequencia[i]);
+                if (i >= 32 && i <= 126) {
+                    Frequencia novaFrequencia;
+                    novaFrequencia.Letra = strdup((char[]){i, '\0'});
+                    novaFrequencia.Frequencia = frequencia[i];
+                    novaFrequencia.frequenciaLetra = 1;
+                    
+                    InserirInicioLista(list, novaFrequencia);
+                }
             }
         }
     }
 }
 
-void contarLetras() {
+void contarLetras(Lista *list) {
     FILE *arquivo;
+
     arquivo = fopen("ListaDePalavras.txt", "r");
 
     if (arquivo == NULL) {
@@ -39,8 +60,7 @@ void contarLetras() {
         return;
     }
 
-    contarFrequencia(arquivo);
-
+    contarFrequencia(arquivo, list);
     fclose(arquivo);
 }
 
