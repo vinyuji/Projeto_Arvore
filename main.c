@@ -14,7 +14,7 @@ int main(){
     int op;
 
     do{
-        printf("\n\n\t____________________________________________________\n\t| 1 - Ler o arquivo linnha por linha               |\n\t| 2 - Contar letras do arquivo e por em uma lista  |\n\t| 3 - Show Lista                                   |\n\t| 4 - Ordenar                                      |\n\t| 5 - inserir de forma ordenada                    |\n\t| 6 - remover da lista e por na arvore             |\n\t| 7 - show Arvore                                  |\n\t| 8 - Huffman                                      |\n\t| 9 - Huffman imprimir                             |\n\t| 0 - sair                                         |\n\t|__________________________________________________|\n");
+        printf("\n\n\t____________________________________________________\n\t| 1 - Ler o arquivo linnha por linha               |\n\t| 2 - Contar letras do arquivo e por em uma lista  |\n\t| 3 - Show Lista                                   |\n\t| 4 - Ordenar                                      |\n\t| 5 - inserir de forma ordenada                    |\n\t| 6 - remover da lista e por na arvore             |\n\t| 7 - show Arvore                                  |\n\t| 8 - Huffman                                      |\n\t| 0 - sair                                         |\n\t|__________________________________________________|\n");
         scanf("%d", &op);
 
         switch(op){
@@ -43,14 +43,11 @@ int main(){
                     NoArvoreNoLista(&list);
                 break;
             case 7: 
-                // AuxiliarShowArvore(&list);
                 AuxiliarShowArvore(&list);
                 break;
             case 8: 
                 TabelaHuffman(list.inicio, tabela, codigoAtual, 0);
                 break;
-            case 9: 
-                ExibirTabelaHuffman(tabela, 256);
             default: 
                 EsvaziarLista(&list);
                 LiberarArvore(&list);

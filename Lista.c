@@ -317,17 +317,5 @@ void ExibirTabelaHuffman(Huffman tabela[], int tamanho) {
 }
 
 
-// int CompararTabelaHuffman(const void *a, const void *b) {
-//     const Huffman *h1 = (const Huffman *)a;
-//     const Huffman *h2 = (const Huffman *)b;
 
-//     // Compare com base no comprimento do código
-//     return strlen(h1->codigo) - strlen(h2->codigo);
-// }
-
-// // Função para ordenar a tabela de Huffman
-// void OrdenarTabelaHuffman(Huffman tabela[], int tamanho) {
-//     // Use qsort para ordenar com base na função de comparação
-//     qsort(tabela, tamanho, sizeof(Huffman), CompararTabelaHuffman);
-// }
 
