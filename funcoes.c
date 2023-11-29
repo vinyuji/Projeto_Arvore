@@ -112,7 +112,7 @@ FILE *arquivo = fopen(nomeArquivo, "w");
     fclose(arquivo);
 }
 
-void ComprimirNoArquivo(Huffman tabela[], int tamanho, const char *nomeArquivo){
+void ComprimirNoArquivo(Huffman tabela[], int tamanho, const char *nomeArquivo) {
     FILE *arquivo = fopen(nomeArquivo, "w");
 
     if (arquivo == NULL) {
@@ -123,31 +123,48 @@ void ComprimirNoArquivo(Huffman tabela[], int tamanho, const char *nomeArquivo){
     fprintf(arquivo, "Códigos ASCII:\n");
 
     for (int i = 0; i < tamanho; i++) {
-        if (tabela[i].codigo != NULL) {
-            // Calcula o número de bits que faltam para completar 8
-            int bitsFaltando = 8 - strlen(tabela[i].codigo);
-            // printf("%d\n", bitsFaltando);
-
-            // Preenche os bits que faltam
-            char *codigoCompleto = (char *)malloc(9);  // 8 bits + '\0'
-            strncpy(codigoCompleto, tabela[i].codigo, strlen(tabela[i].codigo));
-            for (int j = 0; j < bitsFaltando; j++) {
-                strcat(codigoCompleto, "0");
+        if (tabela[i].codigo[0] != '\0' && isprint(tabela[i].letra) || isspace(tabela[i].letra) || ispunct(tabela[i].letra)) {
+            int duplicado = 0;
+            for (int j = 0; j < i; j++) {
+                if (tabela[i].letra == tabela[j].letra) {
+                    duplicado = 1;
+                    break;
+                }
             }
-            // printf("%s\n", codigoCompleto);
-            // Converte o código binário para um caractere ASCII
-            int valorDecimal = strtol(codigoCompleto, NULL, 2);
-            char caractereASCII = (char)valorDecimal;
-            // printf("%c\n", caractereASCII);
+            if (!duplicado) {
+                // Preenche os bits que faltam para completar 8
+                int bitsFaltando = 8 - strlen(tabela[i].codigo);
 
-            // Imprime no arquivo
-            fprintf(arquivo, "Código: %s, Caractere ASCII: %c\n", codigoCompleto, caractereASCII);
+                // Cria um código temporário para imprimir
+                char codigoCompleto[9];  // 8 bits + '\0'
+                strcpy(codigoCompleto, tabela[i].codigo);
+                for (int j = 0; j < bitsFaltando; j++) {
+                    strcat(codigoCompleto, "0");
+                }
 
-            // Libera a memória alocada dinamicamente
-            free(codigoCompleto);
+                // Inverte a string codigoCompleto
+                int len = strlen(codigoCompleto);
+                for (int j = 0; j < len / 2; j++) {
+                    char temp = codigoCompleto[j];
+                    codigoCompleto[j] = codigoCompleto[len - 1 - j];
+                    codigoCompleto[len - 1 - j] = temp;
+                }
+                
+                // printf("letra: %c bit Falta: %d\n", tabela[i].letra, bitsFaltando);
+
+                // Converte o código binário para um caractere ASCII
+                int valorDecimal = strtol(codigoCompleto, NULL, 2);
+                char caractereASCII = (char)valorDecimal;
+
+                printf("letra convertida: %c, Valor decimal: %d valor binario: %s \n", valorDecimal, valorDecimal, codigoCompleto);
+
+                // Imprime no arquivo
+                fprintf(arquivo, "Letra: %c, Código: %s, Caractere ASCII: %c\n", tabela[i].letra, codigoCompleto, caractereASCII);
+                }
+            
         }
     }
-
+    
     fclose(arquivo);
 }
 

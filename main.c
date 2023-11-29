@@ -7,7 +7,6 @@
 
 int main(){
     Lista list;
-    Lista Codigo;
     Init(&list);
     Huffman tabela[256]; 
     char codigoAtual[256] = "";
@@ -56,14 +55,14 @@ int main(){
                 ComprimirNoArquivo(tabela, 256, "Codificado.txt");
                 break;
             default: 
-                EsvaziarLista(&list);
-                LiberarArvore(&list);
-                LiberarMemoriaHuffman(tabela, 256);
                 printf("digite uma opcao valida!!\n\n");
                 break;
         }
 
     } while(op != 0);
 
+
+        EsvaziarLista(&list);
+        LiberarArvore(&list);
     return 0;
 }

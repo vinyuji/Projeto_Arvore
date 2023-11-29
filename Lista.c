@@ -24,6 +24,7 @@ void InserirInicioLista(Lista *list, Frequencia data) {
     list->tam++;
 }
 
+
 void InserirCrescente(Lista *list, Frequencia data) {
     No *novoNo = malloc(sizeof(No));
     if (novoNo == NULL) {
