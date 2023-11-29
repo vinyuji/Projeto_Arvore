@@ -75,7 +75,7 @@ void leituraArquivo() {
     int linha = 1;
     char buffer[1024];
     while (fgets(buffer, sizeof(buffer), arquivo) != NULL) {
-        printf("Linha %d: %s", linha, buffer);
+        printf("\tLinha %d: %s\n", linha, buffer);
         linha++;
     }
 

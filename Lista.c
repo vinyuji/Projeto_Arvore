@@ -5,8 +5,6 @@
 #include "Lista.h"
 #include "funcoes.h"
 
-
-int contadorIteracoes = 0;
 // Inicializa a lista
 void Init(Lista *list) {
     list->inicio = NULL;
@@ -22,10 +20,8 @@ void InserirInicioLista(Lista *list, Frequencia data) {
         list->inicio = novoNo;
     } else {
         printf("Erro na alocação de memória.\n");
-        // Tratar erro na alocação, se necessário
     }
     list->tam++;
-    printf("tamanho lista: %d", list->tam);
 }
 
 void InserirCrescente(Lista *list, Frequencia data) {
@@ -83,10 +79,11 @@ void ShowLista(Lista *list) {
     }
 }
 
-// Modificação em CriarArvoreNo
+// cria no da arvore com base nos dois primerios no da lista 
 No *CriarArvoreNo(No *Esq, No *Dir, int Val, Frequencia Letras) {
-    printf("Criando nó da árvore...\n");
+
     No *NovoNo = (No*)malloc(sizeof(No));
+
     if (NovoNo != NULL) {
         NovoNo->Esquerda = Esq;
         NovoNo->Direita = Dir;
@@ -102,7 +99,7 @@ No *CriarArvoreNo(No *Esq, No *Dir, int Val, Frequencia Letras) {
 
         NovoNo->data.frequenciaLetra = Letras.frequenciaLetra;
         NovoNo->proximo = NULL;
-        printf("Nó da árvore criado com sucesso!\n");
+
     } else {
         printf("Erro na alocação de memória para Nó.\n");
     }
@@ -110,18 +107,16 @@ No *CriarArvoreNo(No *Esq, No *Dir, int Val, Frequencia Letras) {
 }
 
 void InserirNoArvoreLista(Lista *list, No *NovoNo3) {
-    printf("Inserindo nó da árvore na lista...\n");
+
     Frequencia data = NovoNo3->data;
 
     if (list->inicio == NULL) {
-        printf("Inserindo no início da lista...\n");
         NovoNo3->proximo = list->inicio;
         list->inicio = NovoNo3;
     } else if (data.Frequencia < list->inicio->data.Frequencia ||
                (data.Frequencia == list->inicio->data.Frequencia && data.frequenciaLetra < list->inicio->data.frequenciaLetra) ||
                (data.Frequencia == list->inicio->data.Frequencia && data.frequenciaLetra == list->inicio->data.frequenciaLetra && strcmp(data.Letra, list->inicio->data.Letra) <= 0)) {
         // Inserir no início
-        printf("Inserindo no início da lista...\n");
         NovoNo3->proximo = list->inicio;
         list->inicio = NovoNo3;
     } else {
@@ -141,11 +136,9 @@ void InserirNoArvoreLista(Lista *list, No *NovoNo3) {
         // Inserir no meio ou no final
         NovoNo3->proximo = atual;
         anterior->proximo = NovoNo3;
-        printf("Inserindo no meio ou no final da lista...\n");
+
     }
     list->tam++;
-    printf("tamanho: %d", list->tam);
-    printf("Nó inserido com sucesso na lista!\n");
 }
 
 // Cria a Árvore com base nos dois menores números da lista
@@ -201,7 +194,6 @@ No *NoArvoreNoLista(Lista *list) {
     } else {
         printf("Problemas na alocação de memória!\n");
     }
-    contadorIteracoes++;
     return (No*)NovoNo3;
 }
 
@@ -226,7 +218,7 @@ void LiberarMemoriaRecursiva(No *raiz) {
 // Função para liberar a memória da árvore
 void LiberarArvore(Lista *list) {
     LiberarMemoriaRecursiva(list->inicio);
-    list->inicio = NULL;  // Certificar-se de que a lista está vazia
+    list->inicio = NULL; 
 }
 
 // Função para liberar a memória da lista, incluindo os dados dos nós
@@ -241,19 +233,13 @@ void EsvaziarLista(Lista *list) {
     list->tam = 0;
 }
 
-// Função para mostrar a árvore em ordem (in-order traversal)
-// ...
-
-// void AuxiliarShowArvore(Lista *list) {
-//     No *AUX = list->inicio;
-//     ShowArvore(AUX);
-// }
-
+// funcao para mostrar a arvore
 void AuxiliarShowArvore(Lista *list) {
     No *AUX = list->inicio;
     ShowArvoreVisual(AUX, 0);
 }
 
+// esse e um metodo de mostrar a arvore
 void ShowArvore(No *AUX) {
     if (AUX != NULL) {
         ShowArvore(AUX->Esquerda);
@@ -262,6 +248,7 @@ void ShowArvore(No *AUX) {
     }
 }
 
+//esse tenta reproduzir a arvore os elementos de cada no em ordem
 void ShowArvoreVisual(No *AUX, int nivel) {
     if (AUX != NULL) {
         ShowArvoreVisual(AUX->Direita, nivel + 1);
@@ -277,19 +264,21 @@ void ShowArvoreVisual(No *AUX, int nivel) {
 }
 
 
+// cria a tebala de huffman
 void TabelaHuffman(No *AUX, Huffman tabela[], char codigoAtual[], int TamanhoAtual) {
+
     if (AUX == NULL) {
         return;
     }
 
     if (AUX->Esquerda == NULL && AUX->Direita == NULL) {
         // Encontramos uma folha (nó que representa um caractere)
-        if (isalpha(AUX->data.Letra[0])) {
+        if (isprint(AUX->data.Letra[0]) || isspace(AUX->data.Letra[0]) || ispunct(AUX->data.Letra[0])) {
             int indice = AUX->data.Letra[0];
             tabela[indice].letra = AUX->data.Letra[0];
             codigoAtual[TamanhoAtual] = '\0';  // Adiciona o caractere nulo ao final do código
             strncpy(tabela[indice].codigo, codigoAtual, TamanhoAtual + 1);  // Ajusta o tamanho da cópia
-            printf("Letra: %c, Código: %s\n", tabela[indice].letra, tabela[indice].codigo);
+            printf("\t|   %c   |       %-10s  |\n", tabela[indice].letra, tabela[indice].codigo);
         }
     }
 
@@ -303,9 +292,7 @@ void TabelaHuffman(No *AUX, Huffman tabela[], char codigoAtual[], int TamanhoAtu
 }
 
 
-
-
-
+// exibi a tabela de huffman
 void ExibirTabelaHuffman(Huffman tabela[], int tamanho) {
     printf("Tabela Huffman:\n");
     for (int i = 0; i < tamanho; i++) {

@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <ctype.h>
 #include "Lista.h"
 #include "arquivo.h"
 
@@ -76,4 +77,84 @@ char* ConcatenarLetras(char *PalavraA, char *PalavraB){
     return PalavraConcatenada;
 
 }
+
+void ShowNoArquivo(Huffman tabela[], int tamanho, const char *nomeArquivo){
+FILE *arquivo = fopen(nomeArquivo, "w");
+
+    if (arquivo == NULL) {
+        printf("Erro ao abrir o arquivo para escrita.\n");
+        return;
+    }
+
+    fprintf(arquivo, "\tTabela Huffman:\n");
+    fprintf(arquivo,"\t_____________________________\n");
+    fprintf(arquivo,"\t| Letra | codigo de Huffman |\n");
+    fprintf(arquivo,"\t|_______|___________________|\n");
+
+    for (int i = 0; i < tamanho; i++) {
+        // Verifica se o caractere é imprimível e não é um caractere de controle
+        if (isprint(tabela[i].letra) || isspace(tabela[i].letra) || ispunct(tabela[i].letra)) {
+            // Verifica se a letra já foi impressa
+            int duplicado = 0;
+            for (int j = 0; j < i; j++) {
+                if (tabela[i].letra == tabela[j].letra) {
+                    duplicado = 1;
+                    break;
+                }
+            }
+            if (!duplicado) {
+                fprintf(arquivo, "\t|   %c   |       %-10s  |\n", tabela[i].letra, tabela[i].codigo[0] ? tabela[i].codigo : "(vazio)");
+            }
+        }
+    }
+
+    fprintf(arquivo, "\t|_______|___________________|\n");
+    fclose(arquivo);
+}
+
+void ComprimirNoArquivo(Huffman tabela[], int tamanho, const char *nomeArquivo){
+    FILE *arquivo = fopen(nomeArquivo, "w");
+
+    if (arquivo == NULL) {
+        printf("Erro ao abrir o arquivo para escrita.\n");
+        return;
+    }
+
+    fprintf(arquivo, "Códigos ASCII:\n");
+
+    for (int i = 0; i < tamanho; i++) {
+        if (tabela[i].codigo != NULL) {
+            // Calcula o número de bits que faltam para completar 8
+            int bitsFaltando = 8 - strlen(tabela[i].codigo);
+            // printf("%d\n", bitsFaltando);
+
+            // Preenche os bits que faltam
+            char *codigoCompleto = (char *)malloc(9);  // 8 bits + '\0'
+            strncpy(codigoCompleto, tabela[i].codigo, strlen(tabela[i].codigo));
+            for (int j = 0; j < bitsFaltando; j++) {
+                strcat(codigoCompleto, "0");
+            }
+            // printf("%s\n", codigoCompleto);
+            // Converte o código binário para um caractere ASCII
+            int valorDecimal = strtol(codigoCompleto, NULL, 2);
+            char caractereASCII = (char)valorDecimal;
+            // printf("%c\n", caractereASCII);
+
+            // Imprime no arquivo
+            fprintf(arquivo, "Código: %s, Caractere ASCII: %c\n", codigoCompleto, caractereASCII);
+
+            // Libera a memória alocada dinamicamente
+            free(codigoCompleto);
+        }
+    }
+
+    fclose(arquivo);
+}
+
+void LiberarMemoriaHuffman(Huffman tabela[], int tamanho) {
+    for (int i = 0; i < tamanho; i++) {
+        free(tabela[i].codigo);
+    }
+}
+
 
