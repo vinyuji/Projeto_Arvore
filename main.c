@@ -6,61 +6,45 @@
 #include "funcoes.h"
 
 int main(){
+
     Lista list;
     Init(&list);
-    Huffman tabela[256]; 
+    Huffman *tabela = malloc(256 * sizeof(Huffman));
     char codigoAtual[256] = "";
-    int op;
 
-    do{
-        printf("\n\n\t____________________________________________________\n\t| 1 - Ler o arquivo linnha por linha               |\n\t| 2 - Contar letras do arquivo e por em uma lista  |\n\t| 3 - Show Lista                                   |\n\t| 4 - remover da lista e por na arvore             |\n\t| 5 - show Arvore                                  |\n\t| 6 - Huffman                                      |\n\t| 7 - Por tabela no arquivo                        |\n\t| 0 - sair                                         |\n\t|__________________________________________________|\n");
-        scanf("%d", &op);
 
-        switch(op){
-            case 0: 
-                break;
-            case 1: 
-                printf("\tLeitura de arquivo ok\n\n");
-                leituraArquivo();
-                printf("\tLeitura do arquivo feito\n\n");
-                break;
-            case 2: 
                 contarLetras(&list);
-                printf("\tLetras contadas e inseridas na lista com sucesso\n");
-                break;
-            case 3: 
-                printf("\n\tShow Lista\n\n");
+                printf("\n\n\n\tShow Lista\n\n");
                 ShowLista(&list);
-                break;
-            case 4: 
+
+
                 MergeSort(&list.inicio);
-                printf("%d", list.tam);
-                    while(list.tam > 1)
+                while(list.tam > 1)
                 NoArvoreNoLista(&list);
-                printf("\n\tarvore criada com sucesso\n");
-                break;
-            case 5: 
-                printf("\n\t\tArvore\n\n");
+                printf("\n\tArvore criada com sucesso");
+
+                printf("\n\n\n\tShow Lista\n\n");
+                ShowLista(&list);
+
+
+                printf("\n\t\tArvore: \n\n");
                 AuxiliarShowArvore(&list);
-                break;
-            case 6: 
-                printf("\t_____________________________\n");
+
+
+                printf("\n\n\ttabela de huffman criada\n");
+                printf("\n\t_____________________________\n");
                 printf("\t| Letra | codigo de Huffman |\n");
                 printf("\t|_______|___________________|\n");
                 TabelaHuffman(list.inicio, tabela, codigoAtual, 0);
                 printf("\t|_______|___________________|\n");
-                break;
-            case 7: 
-                ShowNoArquivo(tabela, 256, "tabela_huffman.txt");
-                ComprimirNoArquivo(tabela, 256, "Codificado.txt");
-                break;
-            default: 
-                printf("digite uma opcao valida!!\n\n");
-                break;
-        }
 
-    } while(op != 0);
 
+                printf("\n\n\tA quantidade de bit na ListaDePalavra.txt: %d\n", list.inicio->data.Frequencia * 8);
+                SubstituirPorHuffman("ListaDePalavras.txt", tabela);
+                int contar = contarBit();
+                printf("\tA quantidade de Bit reduzidos: %d\n", (list.inicio->data.Frequencia * 8) - contar);
+                printf("\tA quantidade de bit do arquico comprimido em relacao a Lista de palavras em porcentagem: %d \n\n", (contar*100)/(list.inicio->data.Frequencia * 8));
+            
 
         EsvaziarLista(&list);
         LiberarArvore(&list);

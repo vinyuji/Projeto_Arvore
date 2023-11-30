@@ -267,7 +267,6 @@ void ShowArvoreVisual(No *AUX, int nivel) {
 
 // cria a tebala de huffman
 void TabelaHuffman(No *AUX, Huffman tabela[], char codigoAtual[], int TamanhoAtual) {
-
     if (AUX == NULL) {
         return;
     }
@@ -276,10 +275,13 @@ void TabelaHuffman(No *AUX, Huffman tabela[], char codigoAtual[], int TamanhoAtu
         // Encontramos uma folha (nó que representa um caractere)
         if (isprint(AUX->data.Letra[0]) || isspace(AUX->data.Letra[0]) || ispunct(AUX->data.Letra[0])) {
             int indice = AUX->data.Letra[0];
-            tabela[indice].letra = AUX->data.Letra[0];
-            codigoAtual[TamanhoAtual] = '\0';  // Adiciona o caractere nulo ao final do código
-            strncpy(tabela[indice].codigo, codigoAtual, TamanhoAtual + 1);  // Ajusta o tamanho da cópia
-            printf("\t|   %c   |       %-10s  |\n", tabela[indice].letra, tabela[indice].codigo);
+
+            if (tabela[indice].letra == '\0') {
+                tabela[indice].letra = AUX->data.Letra[0];
+                codigoAtual[TamanhoAtual] = '\0';  // Adiciona o caractere nulo ao final do código
+                strncpy(tabela[indice].codigo, codigoAtual, TamanhoAtual + 1);  // Ajusta o tamanho da cópia
+                printf("\t|   %c   |       %-10s  |\n", tabela[indice].letra, tabela[indice].codigo);
+            }
         }
     }
 
@@ -292,9 +294,8 @@ void TabelaHuffman(No *AUX, Huffman tabela[], char codigoAtual[], int TamanhoAtu
     TabelaHuffman(AUX->Direita, tabela, codigoAtual, TamanhoAtual + 1);
 }
 
-
 // exibi a tabela de huffman
-void ExibirTabelaHuffman(Huffman tabela[], int tamanho) {
+void contarBitTabelaHuffman(Huffman tabela[], int tamanho, Lista *list) {
     printf("Tabela Huffman:\n");
     for (int i = 0; i < tamanho; i++) {
         if (tabela[i].letra != '\0') {
@@ -302,7 +303,3 @@ void ExibirTabelaHuffman(Huffman tabela[], int tamanho) {
         }
     }
 }
-
-
-
-

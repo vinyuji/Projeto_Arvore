@@ -6,5 +6,6 @@
 void leituraArquivo();
 void contarLetras(Lista *list);
 void contarFrequencia(FILE *arquivo, Lista *list);
+int contarBit();
 
 #endif /* ARQUIVO_H */

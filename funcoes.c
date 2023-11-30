@@ -78,8 +78,8 @@ char* ConcatenarLetras(char *PalavraA, char *PalavraB){
 
 }
 
-void ShowNoArquivo(Huffman tabela[], int tamanho, const char *nomeArquivo){
-FILE *arquivo = fopen(nomeArquivo, "w");
+void ShowNoArquivo(Huffman tabela[], int tamanho, const char *ARQUI){
+FILE *arquivo = fopen(ARQUI, "w");
 
     if (arquivo == NULL) {
         printf("Erro ao abrir o arquivo para escrita.\n");
@@ -112,60 +112,36 @@ FILE *arquivo = fopen(nomeArquivo, "w");
     fclose(arquivo);
 }
 
-void ComprimirNoArquivo(Huffman tabela[], int tamanho, const char *nomeArquivo) {
-    FILE *arquivo = fopen(nomeArquivo, "w");
+void SubstituirPorHuffman(char *ARQUI, Huffman tabela[]) {
+    FILE *arquivoEntrada = fopen(ARQUI, "r");
+    FILE *arquivoSaida = fopen("Comprimido.txt", "w");
 
-    if (arquivo == NULL) {
-        printf("Erro ao abrir o arquivo para escrita.\n");
+    if (arquivoEntrada == NULL || arquivoSaida == NULL) {
+        printf("Erro ao abrir os arquivos.\n");
         return;
     }
 
-    fprintf(arquivo, "Códigos ASCII:\n");
-
-    for (int i = 0; i < tamanho; i++) {
-        if (tabela[i].codigo[0] != '\0' && isprint(tabela[i].letra) || isspace(tabela[i].letra) || ispunct(tabela[i].letra)) {
-            int duplicado = 0;
-            for (int j = 0; j < i; j++) {
-                if (tabela[i].letra == tabela[j].letra) {
-                    duplicado = 1;
-                    break;
-                }
-            }
-            if (!duplicado) {
-                // Preenche os bits que faltam para completar 8
-                int bitsFaltando = 8 - strlen(tabela[i].codigo);
-
-                // Cria um código temporário para imprimir
-                char codigoCompleto[9];  // 8 bits + '\0'
-                strcpy(codigoCompleto, tabela[i].codigo);
-                for (int j = 0; j < bitsFaltando; j++) {
-                    strcat(codigoCompleto, "0");
-                }
-
-                // Inverte a string codigoCompleto
-                int len = strlen(codigoCompleto);
-                for (int j = 0; j < len / 2; j++) {
-                    char temp = codigoCompleto[j];
-                    codigoCompleto[j] = codigoCompleto[len - 1 - j];
-                    codigoCompleto[len - 1 - j] = temp;
-                }
-                
-                // printf("letra: %c bit Falta: %d\n", tabela[i].letra, bitsFaltando);
-
-                // Converte o código binário para um caractere ASCII
-                int valorDecimal = strtol(codigoCompleto, NULL, 2);
-                char caractereASCII = (char)valorDecimal;
-
-                printf("letra convertida: %c, Valor decimal: %d valor binario: %s \n", valorDecimal, valorDecimal, codigoCompleto);
-
-                // Imprime no arquivo
-                fprintf(arquivo, "Letra: %c, Código: %s, Caractere ASCII: %c\n", tabela[i].letra, codigoCompleto, caractereASCII);
-                }
-            
+    int caractere;
+    while ((caractere = fgetc(arquivoEntrada)) != EOF) {
+        if (isprint(caractere) || isspace(caractere) || ispunct(caractere)) {
+            // Caractere é imprimível, espaço ou pontuação
+            int indice = caractere;
+            // fprintf(arquivoSaida,"%s", tabela[indice].codigo);
+            fputs(tabela[indice].codigo, arquivoSaida);
+        } else {
+            // Caractere não é imprimível, espaço ou pontuação
+            // fprintf(arquivoSaida,"amem");
+            fputc(caractere, arquivoSaida);
         }
     }
-    
-    fclose(arquivo);
+
+    fclose(arquivoEntrada);
+    fclose(arquivoSaida);
+}
+
+void comprirArquivo(char *arquivo){
+    int Bitcontado = contarBit();
+    if(Bitcontado/8 != 0 );
 }
 
 void LiberarMemoriaHuffman(Huffman tabela[], int tamanho) {
@@ -173,5 +149,3 @@ void LiberarMemoriaHuffman(Huffman tabela[], int tamanho) {
         free(tabela[i].codigo);
     }
 }
-
-

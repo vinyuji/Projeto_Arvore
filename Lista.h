@@ -18,6 +18,8 @@ typedef struct No {
 typedef struct Huffman {
     char letra;
     char codigo[256];
+    int qtdZero;
+    int qtdUm;
 } Huffman;
 
 typedef struct {
@@ -40,7 +42,8 @@ No *CriarArvoreNo(No *Esq, No *Dir, int Val, Frequencia Letras);
 void ShowArvore(No *AUX);
 void AuxiliarShowArvore(Lista *list);
 void ShowArvoreVisual(No *AUX, int nivel);
-void ExibirTabelaHuffman(Huffman tabela[], int tamanho);
 void TabelaHuffman(No *AUX, Huffman tabela[], char codigoAtual[], int TamanhoAtual);
+void contarBitTabelaHuffman(Huffman tabela[], int tamanho, Lista*list);
+void ContarBits(Huffman tabela[], int tamanho, int *qtdTotalZero, int *qtdTotalUm);
 
 #endif /* LISTA_H */

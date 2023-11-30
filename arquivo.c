@@ -63,6 +63,31 @@ void contarLetras(Lista *list) {
     fclose(arquivo);
 }
 
+int contarBit() {
+    FILE *arquivo;
+
+    arquivo = fopen("Comprimido.txt", "r");
+
+    if (arquivo == NULL) {
+        printf("Não foi possível abrir o arquivo.\n");
+        return 0;
+    }
+
+    int contador = 0;
+    int caractere;
+
+    while ((caractere = fgetc(arquivo)) != EOF) {
+        contador++;
+    }
+
+    printf("\tA quantidade de caracteres no arquivo é: %d\n", contador);
+    fclose(arquivo);
+
+    return contador;
+}
+
+
+
 void leituraArquivo() {
     FILE *arquivo;
     arquivo = fopen("ListaDePalavras.txt", "r");
