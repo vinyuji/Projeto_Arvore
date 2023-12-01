@@ -17,6 +17,6 @@ void descomprimirArquivo(char *arquivo);
 void BitHuffman(const char *arquivo);
 void removerPrimeiraLinha(const char *nomeArquivo);
 void descomprimirFinal(const char *arquivoComprimido, Huffman *tabelaHuffman);
-void buscarHuffmanNoBuffer(char *buffer, int *bitsLidos, Huffman *ponteiroTabela, FILE *arquivoDescomprimidoFinal);
+char *lerArquivo(const char *nomeArquivo);
 
 #endif /* FUNCOES_H */

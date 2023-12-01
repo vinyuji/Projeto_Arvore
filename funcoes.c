@@ -183,8 +183,7 @@ void comprimirArquivo(char *arquivo) {
                 fclose(ARQUIVOAUX);
                 return;
             }
-
-            printf("%c", bit);  // Exibindo os bits (0 ou 1)
+             // Exibindo os bits (0 ou 1)
 
             if (bit == '1') {
                 byte |= (1 << (7 - i));
@@ -253,77 +252,31 @@ void descomprimirArquivo(char *arquivo) {
 }
 
 
-void BitHuffman(const char *arquivo) {
-    FILE *ARQUIVO = fopen(arquivo, "r");
+void removerUltimoCaractere(const char *nomeArquivo, int diferenca) {
+    // Abrir o arquivo no modo leitura e gravação
+    FILE *arquivo = fopen(nomeArquivo, "r+");
 
-    if (ARQUIVO == NULL) {
+    if (arquivo == NULL) {
         printf("Erro ao abrir o arquivo.\n");
         return;
     }
 
-    // Ler a quantidade total de bits originalmente
-    int bitOriginal;
-    if (fscanf(ARQUIVO, "%d", &bitOriginal) != 1) {
-        printf("Erro ao ler a quantidade original de bits.\n");
-        fclose(ARQUIVO);
-        return;
-    }
-
-    // Ignorar o caractere de nova linha
-    fgetc(ARQUIVO);
-
-    // Contar a quantidade total de bits
-    int bitTotal = 0;
-    int c;
-    while ((c = fgetc(ARQUIVO)) != EOF) {
-        // Somar a quantidade de bits no caractere atual
-        for (int i = 0; i < 8; i++) {
-            bitTotal += (c >> i) & 1;
-        }
-    }
-
-    fclose(ARQUIVO);
-
-    // Calcular a diferença
-    int diferenca = bitTotal - bitOriginal;
-
-    if (diferenca > 0) {
-        // Reabrir o arquivo para remoção dos bits do final
-        ARQUIVO = fopen(arquivo, "r+");
-        if (ARQUIVO == NULL) {
-            printf("Erro ao reabrir o arquivo para remoção de bits.\n");
+    for (int i = 0; i < diferenca; i++) {
+        // Verificar se o arquivo está vazio
+        if (fseek(arquivo, -1, SEEK_END) != 0) {
+            printf("Erro ao posicionar o cursor no final do arquivo.\n");
+            fclose(arquivo);
             return;
         }
 
-        // Posicionar o cursor para o início do último byte
-        fseek(ARQUIVO, -1, SEEK_END);
-
-        // Calcular quantos bytes serão removidos
-        int bytesARemover = (diferenca + 7) / 8;
-
-        // Posicionar o cursor para o início do último byte novamente
-        fseek(ARQUIVO, -bytesARemover, SEEK_END);
-
-        // Remover os caracteres NULL do final
-        int bitRemovido = 0;
-        while (bitRemovido < diferenca) {
-            int byteAtual = fgetc(ARQUIVO);
-            for (int i = 0; i < 8; i++) {
-                bitRemovido += (byteAtual >> i) & 1;
-                if (bitRemovido >= diferenca) {
-                    break;
-                }
-            }
-        }
-
-        // Posicionar o cursor para o início do último byte novamente
-        fseek(ARQUIVO, -bytesARemover, SEEK_END);
-
-        // Truncar o arquivo para remover os bytes excedentes
-        ftruncate(fileno(ARQUIVO), ftell(ARQUIVO));
-
-        fclose(ARQUIVO);
+        // Truncar o arquivo para remover o último caractere
+        fflush(arquivo);
+        ftruncate(fileno(arquivo), ftell(arquivo));
     }
+
+    // Fechar o arquivo
+    fclose(arquivo);
+
 }
 
 void removerPrimeiraLinha(const char *nomeArquivo) {
@@ -362,7 +315,42 @@ void removerPrimeiraLinha(const char *nomeArquivo) {
         printf("Erro ao substituir o arquivo original pelo temporário.\n");
     }
 }
-void buscarHuffmanNoBuffer(char *buffer, int *bitsLidos, Huffman *ponteiroTabela, FILE *arquivoDescomprimidoFinal);
+
+void BitHuffman(const char *arquivo) {
+    FILE *ARQUIVO = fopen(arquivo, "r");
+
+    if (ARQUIVO == NULL) {
+        printf("Erro ao abrir o arquivo.\n");
+        return;
+    }
+
+    // Ler a quantidade total de bits originalmente
+    int bitOriginal;
+    if (fscanf(ARQUIVO, "%d", &bitOriginal) != 1) {
+        printf("Erro ao ler a quantidade original de bits.\n");
+        fclose(ARQUIVO);
+        return;
+    }
+
+    // Ignorar o caractere de nova linha
+    fgetc(ARQUIVO);
+
+    // Contar a quantidade total de bits
+    int bitTotal = 0;
+    int c;
+    while ((c = fgetc(ARQUIVO)) != EOF) {
+        // Somar a quantidade de bits no caractere atual
+            bitTotal++;
+    }
+
+
+    fclose(ARQUIVO);
+
+    // Calcular a diferença
+    int diferenca = bitTotal - bitOriginal;
+    
+        removerUltimoCaractere("Descomprimido.txt", diferenca);
+}
 
 void descomprimirFinal(const char *arquivoParcialDescomprimido, Huffman *tabelaHuffman) {
     FILE *arquivoParcial = fopen(arquivoParcialDescomprimido, "r");
@@ -372,60 +360,49 @@ void descomprimirFinal(const char *arquivoParcialDescomprimido, Huffman *tabelaH
         return;
     }
 
-    FILE *arquivoDescomprimidoFinal = fopen("DescomprimidoFinal.txt", "w");
+    FILE *arquivoDescomprimidoFinal = fopen("arquivo_descomprimido.txt", "w");
 
     if (arquivoDescomprimidoFinal == NULL) {
-        printf("Erro ao criar o arquivo descomprimido final.\n");
+        printf("Erro ao abrir o arquivo descomprimido final para escrita.\n");
         fclose(arquivoParcial);
         return;
     }
 
     Huffman *ponteiroTabela = tabelaHuffman;
-
-    int bitLido;
     int bitsLidos = 0;
-    char buffer[256] = "";
-
+    char buffer[256];
+    int bufferIndex = 0;
+    int bitLido;
+    
     while ((bitLido = fgetc(arquivoParcial)) != EOF) {
         if (bitLido == '0' || bitLido == '1') {
             // Processar cada bit individualmente
-            int bitAtual = bitLido - '0';
+            buffer[bufferIndex++] = bitLido;
 
-            // Adicionar o bit ao buffer
-            buffer[bitsLidos++] = '0' + bitAtual;  // Convertendo para caractere '0' ou '1'
+            // Verificar na tabela de Huffman
+            for (int i = 0; i < 256; i++) {
+                int codigoLengthAtual = strlen(ponteiroTabela[i].codigo);
 
-            // Buscar códigos de Huffman no buffer
-            buscarHuffmanNoBuffer(buffer, &bitsLidos, ponteiroTabela, arquivoDescomprimidoFinal);
+                if (strncmp(buffer, ponteiroTabela[i].codigo, bufferIndex) == 0) {
+                    // Escrever a letra correspondente no arquivo descomprimido final
+                    fprintf(arquivoDescomprimidoFinal, "%c", ponteiroTabela[i].letra);
+
+                    // Atualizar o número de bits lidos
+                    bitsLidos += bufferIndex;
+
+                    // Resetar o buffer
+                    bufferIndex = 0;
+
+                    // Parar de procurar na tabela
+                    break;
+                }
+            }
         }
     }
-
-    // Finalizar a busca após o término do arquivo
-    buscarHuffmanNoBuffer(buffer, &bitsLidos, ponteiroTabela, arquivoDescomprimidoFinal);
 
     fclose(arquivoParcial);
     fclose(arquivoDescomprimidoFinal);
 }
-
-void buscarHuffmanNoBuffer(char *buffer, int *bitsLidos, Huffman *ponteiroTabela, FILE *arquivoDescomprimidoFinal) {
-    for (int j = 0; j < 256; j++) {
-        if (strncmp(buffer, ponteiroTabela[j].codigo, *bitsLidos) == 0) {
-            // Escrever o caractere correspondente no arquivo descomprimido final
-            fprintf(arquivoDescomprimidoFinal, "%c", ponteiroTabela[j].letra);
-            // aemem
-            // Reiniciar o buffer
-            *bitsLidos = 0;
-            buffer[0] = '\0';
-            break;
-        }
-    }
-}
-
-
-
-
-
-
-
 
 void LiberarMemoriaHuffman(Huffman tabela[], int tamanho) {
     for (int i = 0; i < tamanho; i++) {
