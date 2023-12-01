@@ -79,14 +79,10 @@ int contarBit() {
     while ((caractere = fgetc(arquivo)) != EOF) {
         contador++;
     }
-
-    printf("\tA quantidade de caracteres no arquivo é: %d\n", contador);
     fclose(arquivo);
 
     return contador;
 }
-
-
 
 void leituraArquivo() {
     FILE *arquivo;

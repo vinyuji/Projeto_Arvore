@@ -42,11 +42,18 @@ int main(){
                 printf("\n\n\tA quantidade de bit na ListaDePalavra.txt: %d\n", list.inicio->data.Frequencia * 8);
                 SubstituirPorHuffman("ListaDePalavras.txt", tabela);
                 int contar = contarBit();
+                printf("\tA quantidade de caracteres no arquivo é: %d\n", contar);
                 printf("\tA quantidade de Bit reduzidos: %d\n", (list.inicio->data.Frequencia * 8) - contar);
                 printf("\tA quantidade de bit do arquico comprimido em relacao a Lista de palavras em porcentagem: %d \n\n", (contar*100)/(list.inicio->data.Frequencia * 8));
+
+                comprimirArquivo("Comprimido.txt");
+                descomprimirArquivo("Descomprimido.txt");
+                imprimirASCII();
+                BitHuffman("Descomprimido.txt");
             
 
         EsvaziarLista(&list);
         LiberarArvore(&list);
     return 0;
 }
+

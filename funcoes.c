@@ -2,6 +2,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include <ctype.h>
+#include <unistd.h>
 #include "Lista.h"
 #include "arquivo.h"
 
@@ -79,7 +80,7 @@ char* ConcatenarLetras(char *PalavraA, char *PalavraB){
 }
 
 void ShowNoArquivo(Huffman tabela[], int tamanho, const char *ARQUI){
-FILE *arquivo = fopen(ARQUI, "w");
+    FILE *arquivo = fopen(ARQUI, "w");
 
     if (arquivo == NULL) {
         printf("Erro ao abrir o arquivo para escrita.\n");
@@ -139,10 +140,188 @@ void SubstituirPorHuffman(char *ARQUI, Huffman tabela[]) {
     fclose(arquivoSaida);
 }
 
-void comprirArquivo(char *arquivo){
-    int Bitcontado = contarBit();
-    if(Bitcontado/8 != 0 );
+void comprimirArquivo(char *arquivo) {
+    FILE *ARQUIVOAUX = fopen(arquivo, "a");  // Abre o arquivo para leitura
+    FILE *ARQUIVO1 = fopen("Comprimido_Final.txt", "w");  // Cria ou recria o arquivo
+
+    if (ARQUIVO1 == NULL || ARQUIVOAUX == NULL) {
+        printf("Erro ao abrir os arquivos.\n");
+        return;
+    }
+
+    int bitContado = contarBit();
+    int aux = bitContado;
+ 
+    // Encontrar o próximo múltiplo de 8
+    int bitsFaltando = (8 - (bitContado % 8)) % 8;
+
+    // Escrever o número de bits no arquivo comprimido
+    fprintf(ARQUIVO1, "%d\n", bitContado);
+
+    // Adicionar zeros até atingir o próximo múltiplo de 8
+    for (int i = 0; i < bitsFaltando; i++) {
+        fputc('0', ARQUIVOAUX);
+    }
+
+
+    fclose(ARQUIVOAUX);
+    ARQUIVOAUX = fopen(arquivo, "r");
+
+    // Voltar ao início do arquivo para ler os bits adicionados
+    fseek(ARQUIVOAUX, 0, SEEK_SET);
+
+    // Processar os bits de 8 em 8 e escrever os caracteres correspondentes
+    while (aux > 0) {
+        char byte = 0;
+
+        for (int i = 0; i < 8; i++) {
+            int bit = fgetc(ARQUIVOAUX);
+
+            if (bit == EOF) {
+                printf("Erro ao ler o arquivo.\n");
+                fclose(ARQUIVO1);
+                fclose(ARQUIVOAUX);
+                return;
+            }
+
+            printf("%c", bit);  // Exibindo os bits (0 ou 1)
+
+            if (bit == '1') {
+                byte |= (1 << (7 - i));
+            }
+        }
+
+        printf(" ");
+        fputc(byte, ARQUIVO1);
+        aux -= 8;
+    }
+
+    printf("\n");
+    fclose(ARQUIVO1);
+    fclose(ARQUIVOAUX);
 }
+
+void imprimirASCII() {
+    FILE *ARQUIVO = fopen("TabelaAsciiConhecida.txt", "w");
+
+    for (int i = 0; i < 256; i++) {
+        fprintf(ARQUIVO, "posicao: %d letra: %c\n", i, (char)i);
+    }
+}
+
+void descomprimirArquivo(char *arquivo) {
+    FILE *ARQUIVO1 = fopen("Comprimido_Final.txt", "r");  // Abre o arquivo comprimido para leitura
+    FILE *ARQUIVO_DESCOMP = fopen(arquivo, "w");  // Cria ou recria o arquivo descomprimido
+
+    if (ARQUIVO1 == NULL || ARQUIVO_DESCOMP == NULL) {
+        printf("Erro ao abrir os arquivos.\n");
+        return;
+    }
+
+    // Ler o número de bits do arquivo comprimido
+    int bitContado;
+    fscanf(ARQUIVO1, "%d", &bitContado);
+
+    // Ignorar o caractere de nova linha
+    fgetc(ARQUIVO1);
+
+    // Escrever a quantidade original de bits no arquivo descomprimido
+    fprintf(ARQUIVO_DESCOMP, "%d\n", bitContado);
+
+    // Processar os bits de 8 em 8 e escrever os caracteres correspondentes no arquivo descomprimido
+    while (bitContado > 0) {
+        char byte = fgetc(ARQUIVO1);
+
+        if (byte == EOF) {
+            printf("Erro ao ler o arquivo comprimido.\n");
+            fclose(ARQUIVO1);
+            fclose(ARQUIVO_DESCOMP);
+            return;
+        }
+
+        // Escrever os bits do byte no arquivo descomprimido
+        for (int i = 7; i >= 0; i--) {
+            int bit = (byte >> i) & 1;
+            fprintf(ARQUIVO_DESCOMP, "%d", bit);
+        }
+
+        bitContado -= 8;
+    }
+
+    fclose(ARQUIVO1);
+    fclose(ARQUIVO_DESCOMP);
+}
+
+
+void BitHuffman(const char *arquivo) {
+    FILE *ARQUIVO = fopen(arquivo, "r");
+
+    if (ARQUIVO == NULL) {
+        printf("Erro ao abrir o arquivo.\n");
+        return;
+    }
+
+    // Ler a quantidade total de bits originalmente
+    int bitOriginal;
+    if (fscanf(ARQUIVO, "%d", &bitOriginal) != 1) {
+        printf("Erro ao ler a quantidade original de bits.\n");
+        fclose(ARQUIVO);
+        return;
+    }
+
+    // Ignorar o caractere de nova linha
+    fgetc(ARQUIVO);
+
+    // Ler as linhas restantes e contar a quantidade total de bits
+    int bitTotal = 0;
+    int bitAtual;
+    while (fscanf(ARQUIVO, "%d", &bitAtual) == 1) {
+        // Somar a quantidade de bits na linha atual
+        bitTotal += bitAtual;
+
+        // Ignorar o caractere de nova linha
+        fgetc(ARQUIVO);
+    }
+
+    fclose(ARQUIVO);
+
+    // Calcular a diferença
+    int diferenca = bitTotal - bitOriginal;
+
+    if (diferenca > 0) {
+        // Reabrir o arquivo para remoção dos bits do final
+        ARQUIVO = fopen(arquivo, "r+");
+        if (ARQUIVO == NULL) {
+            printf("Erro ao reabrir o arquivo para remoção de bits.\n");
+            return;
+        }
+
+        // Posicionar o cursor para o início do último byte
+        fseek(ARQUIVO, -1, SEEK_END);
+
+        // Ler o último byte
+        int ultimoByte;
+        fread(&ultimoByte, 1, 1, ARQUIVO);
+
+        // Zerar os bits extras no último byte
+        ultimoByte &= ~(0xFF >> (8 - diferenca));
+
+        // Posicionar o cursor para o início do último byte novamente
+        fseek(ARQUIVO, -1, SEEK_END);
+
+        // Escrever o último byte modificado
+        fwrite(&ultimoByte, 1, 1, ARQUIVO);
+
+        // Truncar o arquivo para remover os bits excedentes
+        fflush(ARQUIVO);
+        ftruncate(fileno(ARQUIVO), ftell(ARQUIVO));
+
+        fclose(ARQUIVO);
+    }
+}
+
+
+
 
 void LiberarMemoriaHuffman(Huffman tabela[], int tamanho) {
     for (int i = 0; i < tamanho; i++) {

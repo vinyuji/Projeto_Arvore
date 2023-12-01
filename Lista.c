@@ -24,7 +24,6 @@ void InserirInicioLista(Lista *list, Frequencia data) {
     list->tam++;
 }
 
-
 void InserirCrescente(Lista *list, Frequencia data) {
     No *novoNo = malloc(sizeof(No));
     if (novoNo == NULL) {
@@ -263,7 +262,6 @@ void ShowArvoreVisual(No *AUX, int nivel) {
         ShowArvoreVisual(AUX->Esquerda, nivel + 1);
     }
 }
-
 
 // cria a tebala de huffman
 void TabelaHuffman(No *AUX, Huffman tabela[], char codigoAtual[], int TamanhoAtual) {
