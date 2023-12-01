@@ -52,6 +52,7 @@ int main(){
                 BitHuffman("Descomprimido.txt");
                 removerPrimeiraLinha("Descomprimido.txt");
                 descomprimirFinal("Descomprimido.txt", tabela);
+                ShowNoArquivo(tabela, 256 , "tabela_huffman.txt" );
             
 
         EsvaziarLista(&list);

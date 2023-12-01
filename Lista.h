@@ -44,6 +44,18 @@ void AuxiliarShowArvore(Lista *list);
 void ShowArvoreVisual(No *AUX, int nivel);
 void TabelaHuffman(No *AUX, Huffman tabela[], char codigoAtual[], int TamanhoAtual);
 void contarBitTabelaHuffman(Huffman tabela[], int tamanho, Lista*list);
-void ContarBits(Huffman tabela[], int tamanho, int *qtdTotalZero, int *qtdTotalUm);
+
+
+/*
+do init ate o Esvaziar lista e uma lista normal como ja aprendido
+
+InserirNoArvpreLista ate CriarArvoreNo serve para retira os dois primeiros termos da lista e gerar um no e devolver na lista novamente
+
+tabelaHuffman cria uma tabelaHuffman e por no terminal
+
+contarBitTabelahuffman um show da tabela huffman
+
+*/
+
 
 #endif /* LISTA_H */
