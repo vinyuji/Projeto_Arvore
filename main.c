@@ -50,6 +50,8 @@ int main(){
                 descomprimirArquivo("Descomprimido.txt");
                 imprimirASCII();
                 BitHuffman("Descomprimido.txt");
+                removerPrimeiraLinha("Descomprimido.txt");
+                descomprimirFinal("Descomprimido.txt", tabela);
             
 
         EsvaziarLista(&list);
