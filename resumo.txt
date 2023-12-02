@@ -1,0 +1,7 @@
+
+
+	A quantidade de bit na ListaDePalavra.txt: 5136
+	A quantidade de caracteres no arquivo é: 2719
+	A quantidade de Bit reduzidos: 2417
+	A quantidade de bit do arquico comprimido em relacao a Lista de palavras em porcentagem: 52 
+

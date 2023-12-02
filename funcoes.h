@@ -17,6 +17,7 @@ void BitHuffman(const char *arquivo);
 void removerPrimeiraLinha(const char *nomeArquivo);
 void descomprimirFinal(const char *arquivoComprimido, Huffman *tabelaHuffman);
 char *lerArquivo(const char *nomeArquivo);
+void resumo(char *arquivo, Lista *list);
 
 /*
 mergeSort ordenar a lista uqe foi preenchida com as letras e a sua frequencia de um arquivo.

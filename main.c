@@ -45,7 +45,7 @@ int main(){
                 printf("\tA quantidade de caracteres no arquivo é: %d\n", contar);
                 printf("\tA quantidade de Bit reduzidos: %d\n", (list.inicio->data.Frequencia * 8) - contar);
                 printf("\tA quantidade de bit do arquico comprimido em relacao a Lista de palavras em porcentagem: %d \n\n", (contar*100)/(list.inicio->data.Frequencia * 8));
-
+                resumo("resumo.txt", &list);
                 comprimirArquivo("Comprimido.txt");
                 descomprimirArquivo("Descomprimido.txt");
                 imprimirASCII();

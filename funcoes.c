@@ -403,6 +403,21 @@ void descomprimirFinal(const char *arquivoParcialDescomprimido, Huffman *tabelaH
     fclose(arquivoDescomprimidoFinal);
 }
 
+void resumo(char *arquivo, Lista *list){
+    FILE *ARQUIVO = fopen(arquivo, "w");
+
+    if (ARQUIVO == NULL) {
+        printf("Erro ao abrir o arquivo parcialmente descomprimido para leitura.\n");
+        return;
+    }           
+                fprintf(ARQUIVO, "\n\n\tA quantidade de bit na ListaDePalavra.txt: %d\n", list->inicio->data.Frequencia * 8);
+                int contar = contarBit();
+                fprintf(ARQUIVO, "\tA quantidade de caracteres no arquivo é: %d\n", contar);
+                fprintf(ARQUIVO, "\tA quantidade de Bit reduzidos: %d\n", (list->inicio->data.Frequencia * 8) - contar);
+                fprintf(ARQUIVO, "\tA quantidade de bit do arquico comprimido em relacao a Lista de palavras em porcentagem: %d \n\n", (contar*100)/(list->inicio->data.Frequencia * 8));
+}
+
+
 void LiberarMemoriaHuffman(Huffman tabela[], int tamanho) {
     for (int i = 0; i < tamanho; i++) {
         free(tabela[i].codigo);
