@@ -50,8 +50,8 @@ int main(){
                 descomprimirArquivo("Descomprimido.txt");
                 imprimirASCII();
                 BitHuffman("Descomprimido.txt");
-                removerPrimeiraLinha("Descomprimido.txt");
-                descomprimirFinal("Descomprimido.txt", tabela);
+                // removerPrimeiraLinha("Descomprimido.txt");
+                // descomprimirFinal("Descomprimido.txt", tabela);
                 ShowNoArquivo(tabela, 256 , "tabela_huffman.txt" );
             
 

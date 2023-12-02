@@ -230,7 +230,6 @@ void descomprimirArquivo(char *arquivo) {
     // Processar os bits de 8 em 8 e escrever os caracteres correspondentes no arquivo descomprimido
     while (bitContado > 0) {
         char byte = fgetc(ARQUIVO1);
-
         if (byte == EOF) {
             printf("Erro ao ler o arquivo comprimido.\n");
             fclose(ARQUIVO1);
